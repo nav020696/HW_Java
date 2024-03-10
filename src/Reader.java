@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 
 public class Reader {
@@ -11,32 +8,60 @@ public class Reader {
         this.map = map;
     }
 
-    public void run(String filename){
-
+    public void run(String filepath){
+        if (filepath.isEmpty()){
+            System.err.println("Пустое название файла для считывания данных");
+        }else{
+            readFromFile(filepath);
+//            writeToFile();
+        }
     }
 
-    private void readFromFile(String filename){
-        try(BufferedReader reader = new BufferedReader(new FileReader(filename))){
+    private void readFromFile(String filepath){
+        try(BufferedReader reader = new BufferedReader(new FileReader(filepath))){
             StringBuilder word = new StringBuilder();
             int symbol = reader.read();
             while(symbol != -1){
                 if(symbol != 32){
-                    word.append(symbol);
+                    word.append((char) symbol);
                     symbol = reader.read();
                 }
                 else{
-                    if (map.containsKey(word.toString())){
-                        int count = map.get(word.toString());
-                        map.put(word.toString(), ++count);
-                    }else{
-                        map.put(word.toString(), 1);
-                    }
+                    addToMap(word.toString());
                     word.setLength(0);
                     symbol = reader.read();
                 }
             }
+            addToMap(word.toString());
+            word.setLength(0);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        for (Map.Entry<String, Integer> entry : map.entrySet()){
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        }
+
+    }
+
+    private void writeToFile(){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))){
+            StringBuilder string = new StringBuilder();
+            for (Map.Entry<String, Integer> entry : map.entrySet()){
+                string.append(entry.getKey()).append(" - ").append(entry.getValue()).append("\n");
+                writer.write(string.toString());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void addToMap(String newWord){
+        if (map.containsKey(newWord)){
+            int count = map.get(newWord);
+            map.put(newWord, ++count);
+        }else{
+            map.put(newWord, 1);
         }
     }
 }
