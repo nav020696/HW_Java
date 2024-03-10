@@ -10,10 +10,10 @@ public class Reader {
 
     public void run(String filepath){
         if (filepath.isEmpty()){
-            System.err.println("Пустое название файла для считывания данных");
+            System.err.println("Пустое путь до файла для считывания данных");
         }else{
             readFromFile(filepath);
-//            writeToFile();
+            writeToFile();
         }
     }
 
@@ -37,11 +37,6 @@ public class Reader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        for (Map.Entry<String, Integer> entry : map.entrySet()){
-            System.out.println(entry.getKey() + " " + entry.getValue());
-        }
-
     }
 
     private void writeToFile(){
@@ -50,6 +45,7 @@ public class Reader {
             for (Map.Entry<String, Integer> entry : map.entrySet()){
                 string.append(entry.getKey()).append(" - ").append(entry.getValue()).append("\n");
                 writer.write(string.toString());
+                string.setLength(0);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
